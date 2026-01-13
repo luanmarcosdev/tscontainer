@@ -9,6 +9,6 @@ app.get('/', (req: express.Request, res: express.Response) => {
 });
 
 app.get('/teste', (req: express.Request, res: express.Response) => {
-  res.json({message: 'Testando rota de teste com hot reload"'});
+  res.json({message: `Testando rota de teste com hot reload`});
 });
 
