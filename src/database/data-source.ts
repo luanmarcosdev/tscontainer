@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import "reflect-metadata"
 import { DataSource } from 'typeorm';
+import { join } from 'path/posix';
 
 export const AppDataSource = new DataSource({
   type: 'mysql',
@@ -10,8 +11,8 @@ export const AppDataSource = new DataSource({
   password: process.env.DB_PASS,
   database: process.env.DB_NAME,
 
-  entities: ['src/database/entities/*.ts'],
-  migrations: ['src/database/migrations/*.ts'],
+  entities: [join(__dirname, 'entities', '*.ts')],
+  migrations: [join(__dirname, 'migrations', '*.ts')],
 
   synchronize: false,
   logging: true, 
