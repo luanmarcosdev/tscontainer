@@ -1,5 +1,7 @@
 import { User } from "../database/entities/user.entity.js";
 import { IUserRepository } from "../repositories/user.repository.interface.js";
+import { UserCreateDto } from "../dtos/user/create-user.dto.js";
+import { UserResponseDto } from "../dtos/user/response-user.dto.js";
 
 export class UserService {
     
@@ -9,5 +11,10 @@ export class UserService {
     
     async getAll(): Promise<User[]> {
         return this.userRepository.getAll();
+    }
+
+    async create(data: UserCreateDto): Promise<UserResponseDto> {
+        const user = await this.userRepository.create(data);
+        return user;
     }
 }
