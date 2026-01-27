@@ -3,6 +3,8 @@ import { UserService } from '../services/user.service';
 import { Request, Response } from 'express';
 import { UserCreateDto } from "../dtos/user/create-user.dto";
 import { validate } from "class-validator";
+import { IResponse } from '../models/response.interface';
+import { UserResponseDto } from '../dtos/user/response-user.dto';
 
 
 const repository = new UserRepositoryMySQL();
@@ -10,12 +12,19 @@ const service = new UserService(repository);
 
 export class UserController {
 
-    async getAllUsers(req: Request, res: Response): Promise<void> {
+    async getAllUsers(req: Request, res: Response) {
         try {
             const users = await service.getAll();
-            res.status(200).json(users);
+
+            const response: IResponse<UserResponseDto> = {
+                status: 200,
+                message: 'Users retrieved successfully',
+                data: users
+            };
+
+            res.status(200).json(response);
         } catch (error) {
-            res.status(500).json({ message: 'Internal server error' });
+            res.status(500).json({ message: error instanceof Error ? error.message : 'Internal server error' });
         }
     }
 
@@ -29,9 +38,16 @@ export class UserController {
             }
 
             const result = await service.create(dto);
-            res.status(201).json(result);
+
+            const response: IResponse<UserResponseDto> = {
+                status: 201,
+                message: 'User created successfully',
+                data: result
+            };
+            
+            res.status(201).json(response);
         } catch (error) {
-            res.status(500).json({ message: 'Internal server error' });
+            res.status(500).json({ message: error instanceof Error ? error.message : 'Internal server error' });
         }
     }
 

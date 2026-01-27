@@ -17,6 +17,10 @@ export class UserRepositoryMySQL implements IUserRepository {
         return this.UserRepositoryORM.findOneBy({ id });
     }
 
+    findByEmail(email: string): Promise<User | null> {
+        return this.UserRepositoryORM.findOneBy({ email });
+    }
+
     async create(userData: UserCreateDto): Promise<UserResponseDto> {
         const user = await this.UserRepositoryORM.save(userData);
         return {

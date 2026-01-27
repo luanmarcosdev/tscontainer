@@ -14,6 +14,12 @@ export class UserService {
     }
 
     async create(data: UserCreateDto): Promise<UserResponseDto> {
+        const existingUser = await this.userRepository.findByEmail(data.email);
+        
+        if (existingUser) {
+            throw new Error('Email already in use');
+        }
+        
         const user = await this.userRepository.create(data);
         return user;
     }
