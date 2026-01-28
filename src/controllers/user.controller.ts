@@ -1,6 +1,6 @@
 import { UserRepositoryMySQL } from '../repositories/user.repository';
 import { UserService } from '../services/user.service';
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import { UserCreateDto } from "../dtos/user/create-user.dto";
 import { validate } from "class-validator";
 import { IResponse } from '../models/response.interface';
@@ -28,7 +28,7 @@ export class UserController {
         }
     }
 
-    async createUser(req: Request, res: Response) {
+    async createUser(req: Request, res: Response, next: NextFunction) {
         try {
             const dto = Object.assign(new UserCreateDto(), req.body);
             const errors = await validate(dto);
@@ -47,7 +47,7 @@ export class UserController {
             
             res.status(201).json(response);
         } catch (error) {
-            res.status(500).json({ message: error instanceof Error ? error.message : 'Internal server error' });
+            next(error);
         }
     }
 

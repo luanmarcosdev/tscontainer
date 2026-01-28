@@ -1,7 +1,8 @@
-import { User } from "../database/entities/user.entity.js";
-import { IUserRepository } from "../repositories/user.repository.interface.js";
-import { UserCreateDto } from "../dtos/user/create-user.dto.js";
-import { UserResponseDto } from "../dtos/user/response-user.dto.js";
+import { User } from "../database/entities/user.entity";
+import { IUserRepository } from "../repositories/user.repository.interface";
+import { UserCreateDto } from "../dtos/user/create-user.dto";
+import { UserResponseDto } from "../dtos/user/response-user.dto";
+import { ConflictError } from "../errors/conflict.error";
 
 export class UserService {
     
@@ -17,7 +18,7 @@ export class UserService {
         const existingUser = await this.userRepository.findByEmail(data.email);
         
         if (existingUser) {
-            throw new Error('Email already in use');
+            throw new ConflictError({message: "Email already in use"});
         }
         
         const user = await this.userRepository.create(data);

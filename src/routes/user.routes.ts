@@ -4,7 +4,7 @@ import { UserController } from '../controllers/user.controller';
 const router = express.Router();
 const controller = new UserController();
 
-router.get('/users', (req, res) => controller.getAllUsers(req, res));
-router.post('/users', (req, res) => controller.createUser(req, res));
+router.get('/users', controller.getAllUsers.bind(controller));
+router.post('/users', controller.createUser.bind(controller));
 
 export default router;
