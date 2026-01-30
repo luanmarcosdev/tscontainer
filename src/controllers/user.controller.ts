@@ -5,6 +5,7 @@ import { UserCreateDto } from "../dtos/user/create-user.dto";
 import { validate } from "class-validator";
 import { IResponse } from '../models/response.interface';
 import { UserResponseDto } from '../dtos/user/response-user.dto';
+import { BadRequestError } from '../errors/bad-request.error';
 
 
 const repository = new UserRepositoryMySQL();
@@ -34,7 +35,8 @@ export class UserController {
             const errors = await validate(dto);
             
             if (errors.length) {
-                return res.status(400).json({ message: 'Validation failed', errors });
+                throw new BadRequestError({ message: 'Validation failed', errors });
+                // return res.status(400).json({ message: 'Validation failed', errors });
             }
 
             const result = await service.create(dto);
