@@ -7,7 +7,6 @@ import { IResponse } from '../models/response.interface';
 import { UserResponseDto } from '../dtos/user/response-user.dto';
 import { BadRequestError } from '../errors/bad-request.error';
 
-
 const repository = new UserRepositoryMySQL();
 const service = new UserService(repository);
 
@@ -17,10 +16,18 @@ export class UserController {
         try {
             const users = await service.getAll();
 
+            const usersDto: UserResponseDto[] = users.map((user) => {
+                return {
+                    id: user.id,
+                    name: user.name,
+                    email: user.email
+                };
+            })
+
             const response: IResponse<UserResponseDto> = {
                 status: 200,
                 message: 'Users retrieved successfully',
-                data: users
+                data: usersDto
             };
 
             res.status(200).json(response);
@@ -36,15 +43,20 @@ export class UserController {
             
             if (errors.length) {
                 throw new BadRequestError({ message: 'Validation failed', errors });
-                // return res.status(400).json({ message: 'Validation failed', errors });
             }
 
             const result = await service.create(dto);
 
+            const user: UserResponseDto = {
+                id: result.id,
+                name: result.name,
+                email: result.email
+            };
+
             const response: IResponse<UserResponseDto> = {
                 status: 201,
                 message: 'User created successfully',
-                data: result
+                data: user
             };
             
             res.status(201).json(response);
