@@ -65,4 +65,27 @@ export class UserController {
         }
     }
 
+    async findUser(req: Request, res: Response, next: NextFunction) {
+        try {
+            const userId = parseInt(req.params.id, 10);
+            const user = await service.findById(userId);
+
+            const userDto: UserResponseDto = {
+                id: user!.id,
+                name: user!.name,
+                email: user!.email
+            };
+
+            const response: IResponse<UserResponseDto> = {
+                status: 200,
+                message: 'User retrieved successfully',
+                data: userDto
+            };
+
+            res.status(200).json(response);
+        } catch (error) {
+            next(error);
+        }
+    }
+
 }
