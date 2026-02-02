@@ -6,21 +6,23 @@ import { validate } from "class-validator";
 import { IResponse } from '../models/response.interface';
 import { UserResponseDto } from '../dtos/user/response-user.dto';
 import { BadRequestError } from '../errors/bad-request.error';
+import { UserUpdateDto } from '../dtos/user/update-user.dto';
 
 const repository = new UserRepositoryMySQL();
 const service = new UserService(repository);
 
 export class UserController {
 
-    async getAllUsers(req: Request, res: Response) {
+    async getAllUsers(req: Request, res: Response, next: NextFunction) {
         try {
             const users = await service.getAll();
 
-            const usersDto: UserResponseDto[] = users.map((user) => {
+            const usersDto: UserResponseDto[] = users!.map((user) => {
                 return {
                     id: user.id,
                     name: user.name,
-                    email: user.email
+                    email: user.email,
+                    phone: user.phone
                 };
             })
 
@@ -32,7 +34,7 @@ export class UserController {
 
             res.status(200).json(response);
         } catch (error) {
-            res.status(500).json({ message: error instanceof Error ? error.message : 'Internal server error' });
+            next(error);
         }
     }
 
@@ -50,7 +52,8 @@ export class UserController {
             const user: UserResponseDto = {
                 id: result.id,
                 name: result.name,
-                email: result.email
+                email: result.email,
+                phone: result.phone
             };
 
             const response: IResponse<UserResponseDto> = {
@@ -73,13 +76,45 @@ export class UserController {
             const userDto: UserResponseDto = {
                 id: user!.id,
                 name: user!.name,
-                email: user!.email
+                email: user!.email,
+                phone: user!.phone
             };
 
             const response: IResponse<UserResponseDto> = {
                 status: 200,
                 message: 'User retrieved successfully',
                 data: userDto
+            };
+
+            res.status(200).json(response);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async updateUser(req: Request, res: Response, next: NextFunction) {
+        try {
+            const dto = Object.assign(new UserUpdateDto(), req.body);
+            const errors = await validate(dto);
+            
+            if (errors.length) {
+                throw new BadRequestError({ message: 'Validation failed', errors });
+            }
+
+            const userId = parseInt(req.params.id, 10);
+            const result = await service.update(userId, dto);
+
+            const user: UserResponseDto = {
+                id: result!.id,
+                name: result!.name,
+                email: result!.email,
+                phone: result!.phone
+            };
+
+            const response: IResponse<UserResponseDto> = {
+                status: 200,
+                message: 'User updated successfully',
+                data: user
             };
 
             res.status(200).json(response);

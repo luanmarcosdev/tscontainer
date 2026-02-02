@@ -4,6 +4,8 @@ import { UserCreateDto } from "../dtos/user/create-user.dto";
 import { UserResponseDto } from "../dtos/user/response-user.dto";
 import { ConflictError } from "../errors/conflict.error";
 import { NotFoundError } from "../errors/not-found.error";
+import { BadRequestError } from "../errors/bad-request.error";
+import { UserUpdateDto } from "../dtos/user/update-user.dto";
 
 export class UserService {
     
@@ -15,7 +17,7 @@ export class UserService {
         const users = await this.userRepository.getAll();
 
         if (!users || users.length === 0) {
-            throw new NotFoundError({message: "No users found"});
+            throw new NotFoundError({ message: "No users found" });
         }
 
         return users;
@@ -40,6 +42,26 @@ export class UserService {
         }
 
         return user;
+    }
+
+    async update(id: number, data: Partial<UserCreateDto>): Promise<User | null> {
+        const user = await this.userRepository.findById(id);
+        
+        if (!user || !user.id ) {
+            throw new NotFoundError({message: "User not found"});
+        }
+
+        if (!data.name && !data.email) {
+            throw new BadRequestError({message: "No data provided for update"});
+        }
+
+        const dataToUpdate: UserUpdateDto = {
+            name: data.name,
+            phone: data.phone
+        };
+
+        const updatedUser = await this.userRepository.update(id, dataToUpdate);
+        return updatedUser;
     }
 
     async delete(id: number): Promise<void> {

@@ -5,21 +5,22 @@ import { IUserRepository } from './user.repository.interface';
 import { UserCreateDto } from "../dtos/user/create-user.dto.js";
 import { UserResponseDto } from "../dtos/user/response-user.dto.js";
 import { NotFoundError } from '../errors/not-found.error';
+import { UserUpdateDto } from '../dtos/user/update-user.dto';
 
 export class UserRepositoryMySQL implements IUserRepository {
     
     private UserRepositoryORM = AppDataSource.getRepository(User);
 
-    getAll(): Promise<User[]> {
-        return this.UserRepositoryORM.find();
+    async getAll(): Promise<User[] | [] > {
+        return await this.UserRepositoryORM.find();
     }
     
-    findById(id: number): Promise<User | null> {
-        return this.UserRepositoryORM.findOneBy({ id });
+    async findById(id: number): Promise<User | null> {
+        return await this.UserRepositoryORM.findOneBy({ id });
     }
 
-    findByEmail(email: string): Promise<User | null> {
-        return this.UserRepositoryORM.findOneBy({ email });
+    async findByEmail(email: string): Promise<User | null> {
+        return await this.UserRepositoryORM.findOneBy({ email });
     }
 
     async create(userData: UserCreateDto): Promise<UserResponseDto> {
@@ -27,19 +28,28 @@ export class UserRepositoryMySQL implements IUserRepository {
         return {
             id: user.id,
             name: user.name,
-            email: user.email
+            email: user.email,
+            phone: user.phone
         };
     }
 
-    update(id: number, updateData: { name?: string; email?: string; phone?: string; }): Promise<User> {
-        throw new Error('Method not implemented.');
+    async update(id: number, updateData: UserUpdateDto): Promise<User | null> {
+        const result = await this.UserRepositoryORM.update({ id }, updateData);
+
+        if (result.affected === 0) {
+            throw new NotFoundError({ message: 'User not found' });
+        }
+
+        return this.findById(id);
     }
     
     async delete(id: number): Promise<void> {
         const deleteOperation = await this.UserRepositoryORM.delete(id);
+
         if (deleteOperation.affected === 0) {
             throw new NotFoundError({ message: 'User not found' });
         }
+        
         return;
     }
 
