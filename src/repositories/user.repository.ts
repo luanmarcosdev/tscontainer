@@ -4,6 +4,7 @@ import { IUserRepository } from './user.repository.interface';
 
 import { UserCreateDto } from "../dtos/user/create-user.dto.js";
 import { UserResponseDto } from "../dtos/user/response-user.dto.js";
+import { NotFoundError } from '../errors/not-found.error';
 
 export class UserRepositoryMySQL implements IUserRepository {
     
@@ -34,8 +35,12 @@ export class UserRepositoryMySQL implements IUserRepository {
         throw new Error('Method not implemented.');
     }
     
-    delete(id: number): Promise<void> {
-        throw new Error('Method not implemented.');
+    async delete(id: number): Promise<void> {
+        const deleteOperation = await this.UserRepositoryORM.delete(id);
+        if (deleteOperation.affected === 0) {
+            throw new NotFoundError({ message: 'User not found' });
+        }
+        return;
     }
 
 }

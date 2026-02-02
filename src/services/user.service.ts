@@ -41,4 +41,14 @@ export class UserService {
 
         return user;
     }
+
+    async delete(id: number): Promise<void> {
+        const user = await this.userRepository.findById(id);
+        
+        if (!user || !user.id ) {
+            throw new NotFoundError({message: "User not found"});
+        }
+
+        await this.userRepository.delete(id);
+    }
 }
