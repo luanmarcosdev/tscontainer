@@ -13,7 +13,7 @@ export class UserService {
         this.userRepository = userRepository;
     }
     
-    async getAll(): Promise<User[] | null> {
+    async getAll(): Promise<User[]> {
         const users = await this.userRepository.getAll();
 
         if (!users || users.length === 0) {
@@ -23,7 +23,7 @@ export class UserService {
         return users;
     }
 
-    async create(data: UserCreateDto): Promise<UserResponseDto> {
+    async create(data: UserCreateDto): Promise<User> {
         const existingUser = await this.userRepository.findByEmail(data.email);
         
         if (existingUser) {
@@ -34,7 +34,7 @@ export class UserService {
         return user;
     }
 
-    async findById(id: number): Promise<User | null> {
+    async findById(id: number): Promise<User> {
         const user = await this.userRepository.findById(id);
         
         if (!user || !user.id ) {
@@ -44,14 +44,14 @@ export class UserService {
         return user;
     }
 
-    async update(id: number, data: Partial<UserCreateDto>): Promise<User | null> {
+    async update(id: number, data: UserUpdateDto): Promise<User> {
         const user = await this.userRepository.findById(id);
         
         if (!user || !user.id ) {
             throw new NotFoundError({message: "User not found"});
         }
 
-        if (!data.name && !data.email) {
+        if (!data.name && !data.phone) {
             throw new BadRequestError({message: "No data provided for update"});
         }
 
@@ -61,6 +61,11 @@ export class UserService {
         };
 
         const updatedUser = await this.userRepository.update(id, dataToUpdate);
+
+        if (!updatedUser) {
+            throw new NotFoundError({ message: "Not found user to update"});
+        }
+
         return updatedUser;
     }
 

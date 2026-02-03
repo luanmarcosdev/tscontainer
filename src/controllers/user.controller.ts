@@ -7,6 +7,8 @@ import { IResponse } from '../models/response.interface';
 import { UserResponseDto } from '../dtos/user/response-user.dto';
 import { BadRequestError } from '../errors/bad-request.error';
 import { UserUpdateDto } from '../dtos/user/update-user.dto';
+import { userToUserResponseDto } from '../utils/userToUserResponseDTO.utils'
+import { User } from '../database/entities/user.entity';
 
 const repository = new UserRepositoryMySQL();
 const service = new UserService(repository);
@@ -18,12 +20,7 @@ export class UserController {
             const users = await service.getAll();
 
             const usersDto: UserResponseDto[] = users!.map((user) => {
-                return {
-                    id: user.id,
-                    name: user.name,
-                    email: user.email,
-                    phone: user.phone
-                };
+                return userToUserResponseDto(user)
             })
 
             const response: IResponse<UserResponseDto> = {
@@ -47,15 +44,8 @@ export class UserController {
                 throw new BadRequestError({ message: 'Validation failed', errors });
             }
 
-            const result = await service.create(dto);
-
-            const user: UserResponseDto = {
-                id: result.id,
-                name: result.name,
-                email: result.email,
-                phone: result.phone
-            };
-
+            const result: User = await service.create(dto);
+            const user: UserResponseDto = userToUserResponseDto(result);
             const response: IResponse<UserResponseDto> = {
                 status: 201,
                 message: 'User created successfully',
@@ -72,20 +62,12 @@ export class UserController {
         try {
             const userId = parseInt(req.params.id, 10);
             const user = await service.findById(userId);
-
-            const userDto: UserResponseDto = {
-                id: user!.id,
-                name: user!.name,
-                email: user!.email,
-                phone: user!.phone
-            };
-
+            const userDto: UserResponseDto = userToUserResponseDto(user);
             const response: IResponse<UserResponseDto> = {
                 status: 200,
                 message: 'User retrieved successfully',
                 data: userDto
             };
-
             res.status(200).json(response);
         } catch (error) {
             next(error);
@@ -103,14 +85,7 @@ export class UserController {
 
             const userId = parseInt(req.params.id, 10);
             const result = await service.update(userId, dto);
-
-            const user: UserResponseDto = {
-                id: result!.id,
-                name: result!.name,
-                email: result!.email,
-                phone: result!.phone
-            };
-
+            const user: UserResponseDto = userToUserResponseDto(result!)
             const response: IResponse<UserResponseDto> = {
                 status: 200,
                 message: 'User updated successfully',
@@ -129,7 +104,7 @@ export class UserController {
             await service.delete(userId);
 
             const response: IResponse<null> = {
-                status: 204,
+                status: 200,
                 message: 'User deleted successfully',
                 data: null
             };
