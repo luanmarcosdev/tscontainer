@@ -1,7 +1,6 @@
 import { User } from "../database/entities/user.entity";
 import { IUserRepository } from "../repositories/user.repository.interface";
 import { UserCreateDto } from "../dtos/user/create-user.dto";
-import { UserResponseDto } from "../dtos/user/response-user.dto";
 import { ConflictError } from "../errors/conflict.error";
 import { NotFoundError } from "../errors/not-found.error";
 import { BadRequestError } from "../errors/bad-request.error";
@@ -9,9 +8,7 @@ import { UserUpdateDto } from "../dtos/user/update-user.dto";
 
 export class UserService {
     
-    constructor(private readonly userRepository: IUserRepository) {
-        this.userRepository = userRepository;
-    }
+    constructor(private readonly userRepository: IUserRepository) {}
     
     async getAll(): Promise<User[]> {
         const users = await this.userRepository.getAll();

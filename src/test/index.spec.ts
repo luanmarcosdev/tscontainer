@@ -1,6 +1,6 @@
-describe('container', () => {
+describe('Initial test', () => {
 
-  it('true = true', () => {
+  it('true is equal to true', () => {
     expect(true).toBe(true);
   })
 
