@@ -3,7 +3,7 @@ import { UserService } from '../services/user.service';
 import { Request, Response, NextFunction } from 'express';
 import { UserCreateDto } from "../dtos/user/create-user.dto";
 import { validate } from "class-validator";
-import { IResponse } from '../models/response.interface';
+import { IResponse } from '../dtos/success-response.dto';
 import { UserResponseDto } from '../dtos/user/response-user.dto';
 import { BadRequestError } from '../errors/bad-request.error';
 import { UserUpdateDto } from '../dtos/user/update-user.dto';
