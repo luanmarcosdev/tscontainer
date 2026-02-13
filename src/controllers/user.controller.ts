@@ -7,7 +7,7 @@ import { IResponse } from '../dtos/success-response.dto';
 import { UserResponseDto } from '../dtos/user/response-user.dto';
 import { BadRequestError } from '../errors/bad-request.error';
 import { UserUpdateDto } from '../dtos/user/update-user.dto';
-import { userToUserResponseDto } from '../utils/userToUserResponseDTO.utils'
+import { userToUserResponseDto } from '../mappers/user.mapper'
 import { User } from '../database/entities/user.entity';
 
 const repository = new UserRepositoryMySQL();
