@@ -1,10 +1,10 @@
-import { UserService } from "../../services/user.service";
-import { IUserRepository } from "../../repositories/user.repository.interface";
-import { ConflictError } from "../../errors/conflict.error";
-import { NotFoundError } from "../../errors/not-found.error";
-import { BadRequestError } from "../../errors/bad-request.error";
-import { UserCreateDto } from "../../dtos/user/create-user.dto";
-import { User } from "../../database/entities/user.entity";
+import { UserService } from "../../src/services/user.service";
+import { IUserRepository } from "../../src/repositories/user.repository.interface";
+import { ConflictError } from "../../src/errors/conflict.error";
+import { NotFoundError } from "../../src/errors/not-found.error";
+import { BadRequestError } from "../../src/errors/bad-request.error";
+import { UserCreateDto } from "../../src/dtos/user/create-user.dto";
+import { User } from "../../src/database/entities/user.entity";
 
 describe("UserService", () => {
   let userService: UserService;
